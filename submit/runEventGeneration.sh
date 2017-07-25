@@ -61,21 +61,7 @@ RANDOMSEED=`echo $RANDOMSEED | rev | cut -c 3- | rev`
 outfilename_tmp="$PROCESS"'_'"$RANDOMSEED"
 outfilename="${outfilename_tmp//[[:space:]]/}"
 
-#SMM specialty - some LHEs produced in the cluster dont have the weights
-if [[ $PROCESS == *"SMM"* ]]; then
-    LHEFILE="cmsgrid_final.lhe"
-    if grep -q rwgt_21 "$LHEFILE";
-    then
-	echo "YAY. The reweighting has worked."
-    else
-	echo "CRAP. The reweighting has not worked. Exiting here."
-	mv cmsgrid_final.lhe garbage.lhe
-	exit 1
-    fi
-fi
-
 mv cmsgrid_final.lhe ${outfilename}.lhe
-
 
 ls -lhrt
 #
