@@ -46,14 +46,7 @@ ls -lhrt
 
 RANDOMSEED=`od -vAn -N4 -tu4 < /dev/urandom`
 
-#RANDOMSEED1=${RANDOM}
-#RANDOMSEED2=${RANDOM}
-
-#RANDOMSEED="$((RANDOMSEED1 * RANDOMSEED2))"
-
-#if [ ${#RANDOMSEED} -gt "4" ];then
 RANDOMSEED=`echo $RANDOMSEED | rev | cut -c 3- | rev`
-#fi
 
 #Run
 . runcmsgrid.sh 500 ${RANDOMSEED} 1
