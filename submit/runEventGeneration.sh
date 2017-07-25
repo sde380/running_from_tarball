@@ -46,6 +46,7 @@ ls -lhrt
 
 RANDOMSEED=`od -vAn -N4 -tu4 < /dev/urandom`
 
+#Sometimes the RANDOMSEED is too long for madgraph
 RANDOMSEED=`echo $RANDOMSEED | rev | cut -c 3- | rev`
 
 #Run
