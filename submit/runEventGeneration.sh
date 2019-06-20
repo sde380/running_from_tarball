@@ -28,8 +28,12 @@ export WORKDIR=`pwd`
 #############
 # generate LHEs
 
-export SCRAM_ARCH=slc6_amd64_gcc481
-CMSSWRELEASE=CMSSW_7_1_20_patch3
+#export SCRAM_ARCH=slc6_amd64_gcc481
+export SCRAM_ARCH=slc6_amd64_gcc630
+#CMSSWRELEASE=CMSSW_7_1_20_patch3
+#CMSSWRELEASE=CMSSW_7_1_30
+#CMSSWRELEASE=CMSSW_7_1_20
+CMSSWRELEASE=CMSSW_9_3_8
 scram p CMSSW $CMSSWRELEASE
 cd $CMSSWRELEASE/src
 mkdir -p Configuration/GenProduction/python/
@@ -50,7 +54,7 @@ RANDOMSEED=`od -vAn -N4 -tu4 < /dev/urandom`
 RANDOMSEED=`echo $RANDOMSEED | rev | cut -c 3- | rev`
 
 #Run
-. runcmsgrid.sh 500 ${RANDOMSEED} 1
+. runcmsgrid.sh 300 ${RANDOMSEED} 1
 
 outfilename_tmp="$PROCESS"'_'"$RANDOMSEED"
 outfilename="${outfilename_tmp//[[:space:]]/}"
@@ -65,7 +69,6 @@ ls -lhrt
 
 cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --filein file:${outfilename}.lhe --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --conditions MCRUN2_71_V1::All --beamspot Realistic50ns13TeVCollision --step GEN,SIM --magField 38T_PostLS1 --python_filename ${outfilename}_gensim.py --no_exec -n 1000
 
-
 #Make each file unique to make later publication possible
 linenumber=`grep -n 'process.source' ${outfilename}_gensim.py | awk '{print $1}'`
 linenumber=${linenumber%:*}
@@ -77,7 +80,7 @@ echo "    firstRun = cms.untracked.uint32(1)," >> head.py
 echo "    firstLuminosityBlock = cms.untracked.uint32($RANDOMSEED)," >> head.py
 cat tail.py >> head.py
 mv head.py ${outfilename}_gensim.py
-rm tail.py
+rm -rf tail.py
 
 #Run
 cmsRun ${outfilename}_gensim.py
@@ -88,8 +91,8 @@ cmsRun ${outfilename}_gensim.py
 # Generate AOD
 
 export SCRAM_ARCH=slc6_amd64_gcc530
-scram p CMSSW CMSSW_8_0_21
-cd CMSSW_8_0_21/src
+scram p CMSSW CMSSW_8_0_32
+cd CMSSW_8_0_32/src
 eval `scram runtime -sh`
 cd -
 
@@ -103,45 +106,33 @@ mv aod_template.py ${outfilename}_1_cfg.py
 
 cmsRun ${outfilename}_1_cfg.py
 
-cmsDriver.py step2 --filein file:${outfilename}_step1.root --fileout file:${outfilename}_aod.root --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,RECO,EI --nThreads 1 --era Run2_2016 --python_filename ${outfilename}_2_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 1000
+cmsDriver.py step2 --filein file:${outfilename}_step1.root --fileout file:${outfilename}_aod.root --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,RECO,EI --nThreads 2 --era Run2_2016 --python_filename ${outfilename}_2_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 1000
 
 #Run
+
 cmsRun ${outfilename}_2_cfg.py
 
 #
 ###########
 ###########
-# Generate MiniAODv2
+# Generate MiniAODv3
 
-cmsDriver.py step1 --filein file:${outfilename}_aod.root --fileout file:${outfilename}_miniaod.root --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step PAT --nThreads 1 --era Run2_2016 --python_filename ${outfilename}_miniaod_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 1000
+export SCRAM_ARCH=slc6_amd64_gcc630
+scram p CMSSW CMSSW_9_4_9
+cd CMSSW_9_4_9/src
+eval `scram runtime -sh`
+cd -
+
+cmsDriver.py step1 --filein file:${outfilename}_aod.root --fileout file:${outfilename}_miniaod.root --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 94X_mcRun2_asymptotic_v3 --step PAT --nThreads 2 --era Run2_2016,run2_miniAOD_80XLegacy --python_filename ${outfilename}_miniaod_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 1000
+
 
 #Run
 cmsRun ${outfilename}_miniaod_cfg.py
-
-
-#
 ###########
 ###########
-# Stage out
+# Stage out #v1
 
-#v1
-tar xf $BASEDIR/input/copy.tar
-
-# define base output location
-REMOTE_USER_DIR="/user/bmaier/moriond17/$PROCESS"
-
-
-ls -lrht
-
-if which gfal-copy
-then
-    gfal-copy ${outfilename}_miniaod.root gsiftp://se01.cmsaf.mit.edu:2811/cms/store${REMOTE_USER_DIR}/${outfilename}_miniaod.root
-elif which lcg-cp
-then
-    lcg-cp -v -D srmv2 -b file://$PWD/${outfilename}_miniaod.root gsiftp://se01.cmsaf.mit.edu:2811/cms/store${REMOTE_USER_DIR}/${outfilename}_miniaod.root
-else
-    echo "No way to copy something."                                                                                                                                         
-    exit 1
-fi
-
+xrdcp file:///$PWD/${outfilename}_miniaod.root root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/Monojet/year2016/MZprime_500_Mchi_150/${outfilename}_miniaod.root
 echo "DONE."
+
+
