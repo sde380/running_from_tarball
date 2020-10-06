@@ -82,15 +82,13 @@ eval `scram runtime -sh`
 scram b
 cd ../../
 
-cp ${BASEDIR}/input/pu_files2017.py .
-cp ${BASEDIR}/input/aod_template2017.py .
+cp ${BASEDIR}/input/pu_files2017.py ./
+cp ${BASEDIR}/input/aod_template2017.py ./${outfilename}_cfg.py
 
-sed -i 's/XX-GENSIM-XX/'${outfilename}'/g' aod_template2017.py
-sed -i 's/XX-AODFILE-XX/'${outfilename}'/g' aod_template2017.py
+sed -i 's/XX-GENSIM-XX/'${outfilename}'/g' ${outfilename}_cfg.py 
+sed -i 's/XX-AODFILE-XX/'${outfilename}'/g' ${outfilename}_cfg.py 
 
-mv aod_template2017.py ${outfilename}_1_cfg.py
-
-cmsRun ${outfilename}_1_cfg.py
+cmsRun ${outfilename}_cfg.py
 
 cmsDriver.py step2 --filein file:${outfilename}_step1.root --fileout file:${outfilename}_aod.root --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 94X_mc2017_realistic_v11 --step RAW2DIGI,RECO,RECOSIM,EI --nThreads 2 --era Run2_2017 --python_filename ${outfilename}_aod_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 500 
 
@@ -128,20 +126,20 @@ eval `scram runtime -sh`
 scram b
 cd ../../
 
-cp ${BASEDIR}/input/mc_NANO_2017.py ./
+cp ${BASEDIR}/input/mc_NANO_2017.py ./${outfilename}_nanoaod_cfg.py
 
-sed -i 's/XX-MINI-XX/'${outfilename}'/g' mc_NANO_2017.py 
-sed -i 's/XX-NANO-XX/'${outfilename}'/g' mc_NANO_2017.py
-
-mv mc_NANO_2017.py ${outfilename}_nanoaod_cfg.py
+sed -i 's/XX-MINI-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py 
+sed -i 's/XX-NANO-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py
 
 #Run
 cmsRun ${outfilename}_nanoaod_cfg.py
 
+ls -ltrh
+
 ###########
 ###########
 # Stage out #v1
-copypath=$(readlink -f ./${outfilename}_miniaod.root)
+copypath=$(readlink -f ./${outfilename}_nano.root)
 echo "${copypath} will be copied to EOS"
 
 xrdcp file://${copypath} root://cmseos.fnal.gov//store/user/jongho/temp/${outfilename}_nano.root
