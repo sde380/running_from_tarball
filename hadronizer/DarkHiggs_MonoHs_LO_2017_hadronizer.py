@@ -4,17 +4,13 @@ from Configuration.Generator.Pythia8CommonSettings_cfi import *
 from Configuration.Generator.MCTunes2017.PythiaCP5Settings_cfi import *
 #from Configuration.Generator.PSweightsPythia.PythiaPSweightsSettings_cfi import *
 
-import sys
-
-print('Mass point is', sys.argv[0], 'for mediator', sys.argv[1], 'for dark matter and', sys.argv[2], 'for dark Higgs')
-print('Number of events are', sys.argv[3])
-
-gridpack = '/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.6.0/DarkHiggs/MonoHs/DarkHiggs_MonoHs_LO_MZprime-'+str(sys.argv[0])+'_Mhs-'+str(sys.argv[2])+'_Mchi-'+str(sys.argv[1])+'_gSM-0p25_gDM-1p0_th-0p01_13TeV-madgraph_slc6_amd64_gcc630_CMSSW_9_3_8_tarball.tar.xz'
+print('Mass point is mz GeV for mediator, mchi GeV for dark matter, and mhs GeV for dark Higgs')
+gridpack = '/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.6.0/DarkHiggs/MonoHs/DarkHiggs_MonoHs_LO_MZprime-mz_Mhs-mhs_Mchi-mchi_gSM-0p25_gDM-1p0_th-0p01_13TeV-madgraph_slc6_amd64_gcc630_CMSSW_9_3_8_tarball.tar.xz'
 
 externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
         #args = cms.vstring('/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.6.0/DarkHiggs/MonoHs/DarkHiggs_MonoHs_LO_MZprime-195_Mhs-70_Mchi-100_gSM-0p25_gDM-1p0_th-0p01_13TeV-madgraph_slc6_amd64_gcc630_CMSSW_9_3_8_tarball.tar.xz'),
         args = cms.vstring(gridpack),
-        nEvents = cms.untracked.uint32(sys.argv[3]),
+        nEvents = cms.untracked.uint32(300),
         numberOfParameters = cms.uint32(1),
         outputFile = cms.string('cmsgrid_final.lhe'),
         scriptName = cms.FileInPath('GeneratorInterface/LHEInterface/data/run_generic_tarball_cvmfs.sh')
