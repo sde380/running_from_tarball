@@ -3,14 +3,14 @@
 from sys import argv
 from os import system,getenv,getuid,getcwd
 
-logpath='/uscmst1b_scratch/lpc1/3DayLifetime/jongho/mHs_500_50_150'
+logpath='/uscmst1b_scratch/lpc1/3DayLifetime/jongho/log2'
 workpath=getcwd()+'/'+str(argv[1])
 uid=getuid()
 
 njobs = argv[2]
 classad='''
 universe = vanilla
-executable = {0}/exec2018.sh
+executable = {0}/exec2016.sh
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
 transfer_input_files = {0}/submit.tgz
@@ -19,19 +19,11 @@ input = /dev/null
 output = {1}/$(Cluster)_$(Process).out
 error = {1}/$(Cluster)_$(Process).err
 log = {1}/$(Cluster)_$(Process).log
-rank = Mips
 arguments = $(Process)
++SingularityImage = "/cvmfs/unpacked.cern.ch/registry.hub.docker.com/cmssw/slc6:amd64"
 request_memory = 4096
-use_x509userproxy = True
-+AccountingGroup = "analysis.sdogra"
-+AcctGroup = "analysis"
-+ProjectName = "CpDarkMatterSimulation"
 queue {3}
 '''.format(workpath,logpath,uid,njobs)
-
-#x509userproxy = /tmp/x509up_u{2}
-#transfer_input_files = {0}/submit.tgz,{0}/x509up
-#on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
 
 with open(logpath+'/condor.jdl','w') as jdlfile:
   jdlfile.write(classad)
