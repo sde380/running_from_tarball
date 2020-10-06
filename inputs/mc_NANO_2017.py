@@ -27,7 +27,7 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('XX-MINI-XX.root'),
+    fileNames = cms.untracked.vstring('XX-MINI-XX_miniaod.root'),
     secondaryFileNames = cms.untracked.vstring()
 )
 
