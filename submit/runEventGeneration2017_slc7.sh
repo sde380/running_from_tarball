@@ -120,6 +120,13 @@ xrdcp file://${copypath} root://cmseos.fnal.gov//store/user/jongho/temp/${outfil
 ###########
 ###########
 # Generate NanoAOD
+export SCRAM_ARCH=slc6_amd64_gcc700
+scram p CMSSW CMSSW_10_2_18
+cd CMSSW_10_2_18/src
+eval `scram runtime -sh`
+
+scram b
+cd ../../
 
 cp ${BASEDIR}/input/mc_NANO_2017.py ./
 
