@@ -45,6 +45,7 @@ if [ $2 = "mhs" ]; then
         mv ${BASEDIR}/inputs/${1}_MZprime-${mZ}_Mhs-${mHS}_Mchi-${mCHI}_hadronizer.py ./submit/input/
         cp inputs/aod_template2017.py ./submit/input/
         cp inputs/pu_files2017.py ./submit/input/
+        cp inputs/mc_NANO_2017.py ./submit/input/
         cp ${BASEDIR}/exec2017.sh $SUBMIT_WORKDIR
     fi
 
@@ -102,6 +103,7 @@ if [ $2 = "mjet" ]; then
         mv ${BASEDIR}/inputs/${1}_MZprime-${mZ}_Mchi-${mCHI}_hadronizer.py ./submit/input/
         cp inputs/aod_template2017.py ./submit/input/
         cp inputs/pu_files2017.py ./submit/input/
+        cp inputs/mc_NANO_2017.py ./submit/input/
         cp ${BASEDIR}/exec2017.sh $SUBMIT_WORKDIR
     fi
 

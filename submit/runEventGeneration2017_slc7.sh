@@ -57,8 +57,6 @@ eval `scram runtime -sh`
 mkdir -p Configuration/GenProduction/python/
 cp ${BASEDIR}/input/${HADRONIZER} Configuration/GenProduction/python/
 
-ls -ltrh
-
 scram b
 
 cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --datatier GEN-SIM,LHE --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step LHE,GEN,SIM --geometry DB:Extended --era Run2_2017 --python_filename ${outfilename}_gensim.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 300
@@ -116,27 +114,29 @@ ls -ltrh
 copypath=$(readlink -f ./${outfilename}_miniaod.root)
 echo "${copypath} will be copied to EOS"
 
-#
-############
-############
-## Generate NanoAOD
-#
-##cmsDriver.py step4 --filein file:${outfilename}_miniaod.root --fileout file:${outfilename}_nanoaod.root --mc --eventcontent NANOEDMAODSIM --datatier NANOAODSIM --conditions 102X_mc2017_realistic_v7 --step NANO --nThreads 2 --era Run2_2017,run2_nanoAOD_94XMiniAODv2 --python_filename ${outfilename}_nanoaod_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 500 
-#
-##Run
-##cmsRun ${outfilename}_nanoaod_cfg.py
+#### Copy MiniAOD to EOS
+xrdcp file://${copypath} root://cmseos.fnal.gov//store/user/jongho/temp/${outfilename}_miniaod.root
+
+###########
+###########
+# Generate NanoAOD
+
+cp ${BASEDIR}/input/mc_NANO_2017.py ./
+
+sed -i 's/XX-MINI-XX/'${outfilename}'/g' mc_NANO_2017.py 
+sed -i 's/XX-NANO-XX/'${outfilename}'/g' mc_NANO_2017.py
+
+mv mc_NANO_2017.py ${outfilename}_nanoaod_cfg.py
+
+#Run
+cmsRun ${outfilename}_nanoaod_cfg.py
 
 ###########
 ###########
 # Stage out #v1
+copypath=$(readlink -f ./${outfilename}_miniaod.root)
+echo "${copypath} will be copied to EOS"
 
-xrdcp file://${copypath} root://cmseos.fnal.gov//store/user/jongho/temp/${outfilename}_miniaod.root
-#xrdcp file:///$PWD/${outfilename}_miniaod.root root://cmseos.fnal.gov//store/user/jongho/temp/DarkHiggs_MonoHs_LO_MZprime_195_Mhs_70_Mchi_100_${TempNumber}_miniaod.root
-#xrdcp file:///$PWD/${outfilename}_miniaod.root root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/MonoHs2017/mhs50GeV/Mz200_Mdm150/DarkHiggs_MonoHs_LO_MZprime_200_Mhs_50_Mchi_150_${TempNumber}_miniaod.root
-#xrdcp file:///$PWD/${outfilename}_miniaod.root root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/year2017New/mHs70/MZprime_500_Mhs_70_Mchi_150/DarkHiggs_MonoHs_LO_MZprime_500_Mhs_70_Mchi_150_${TempNumber}_miniaod.root
-#xrdcp file:///$PWD/${outfilename}_miniaod.root root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/year2017New/mHs90/MZprime_500_Mhs_90_Mchi_150/DarkHiggs_MonoHs_LO_MZprime_500_Mhs_90_Mchi_150_${TempNumber}_miniaod.root
-#xrdcp file:///$PWD/${outfilename}_miniaod.root root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/Monojet/year2017New/MZprime_500_Mchi_150/DarkHiggs_MonoJet_LO_MZprime_500_Mchi_150_${TempNumber}_miniaod.root
-#xrdcp file:///$PWD/${outfilename}_miniaod.root root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoV/MonoW/year2017New/MZprime_500_Mchi_150/DarkHiggs_MonoW_LO_MZprime_500_Mchi_150_${TempNumber}_miniaod.root
-#xrdcp file:///$PWD/${outfilename}_miniaod.root root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoV/MonoZ/year2017New/MZprime_500_Mchi_150/DarkHiggs_MonoZ_LO_MZprime_500_Mchi_150_${TempNumber}_miniaod.root
+xrdcp file://${copypath} root://cmseos.fnal.gov//store/user/jongho/temp/${outfilename}_nano.root
 
 echo "DONE."
