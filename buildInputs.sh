@@ -8,7 +8,7 @@ mCHI=150
 year=${3}
 
 mkdir -p ./submit/input/
-cp ./inputs/copy.tar ./submit/input/
+cp ./inputs/nanotools.tar ./submit/input/
 
 if [ $2 = "mhs" ]; then
 
@@ -34,10 +34,10 @@ if [ $2 = "mhs" ]; then
 
     
     if [ ${year} -eq 2016 ]; then
-        #cp ${TARBALLDIR}/inputs/${1}_tarball.tar.xz ./submit/input/
-        #cp ${TARBALLDIR}/inputs/${1}_hadronizer.py ./submit/input/
+        mv ${BASEDIR}/inputs/${1}_MZprime-${mZ}_Mhs-${mHS}_Mchi-${mCHI}_hadronizer.py ./submit/input/
         cp inputs/aod_template2016.py ./submit/input/
         cp inputs/pu_files2016.py ./submit/input/
+        cp inputs/mc_NANO_2016.py ./submit/input/
         cp ${BASEDIR}/exec2016.sh $SUBMIT_WORKDIR
     fi
 
@@ -66,7 +66,7 @@ if [ $2 = "mhs" ]; then
     mv submit.tgz $SUBMIT_WORKDIR
 
     #does everything look okay?
-    ls -l $SUBMIT_WORKDIR
+    ls -lh $SUBMIT_WORKDIR
 fi
 
 if [ $2 = "mjet" ]; then
@@ -92,10 +92,10 @@ if [ $2 = "mjet" ]; then
     SUBMIT_WORKDIR=${BASEDIR}/work_${1}_MZprime-${mZ}_Mchi-${mCHI}
     
     if [ ${year} -eq 2016 ]; then
-        #cp ${TARBALLDIR}/inputs/${1}_tarball.tar.xz ./submit/input/
-        #cp ${TARBALLDIR}/inputs/${1}_hadronizer.py ./submit/input/
+        mv ${BASEDIR}/inputs/${1}_MZprime-${mZ}_Mchi-${mCHI}_hadronizer.py ./submit/input/
         cp inputs/aod_template2016.py ./submit/input/
         cp inputs/pu_files2016.py ./submit/input/
+        cp inputs/mc_NANO_2016.py ./submit/input/
         cp ${BASEDIR}/exec2016.sh $SUBMIT_WORKDIR
     fi
 
@@ -124,5 +124,5 @@ if [ $2 = "mjet" ]; then
     mv submit.tgz $SUBMIT_WORKDIR
 
     #does everything look okay?
-    ls -l $SUBMIT_WORKDIR
+    ls -lh $SUBMIT_WORKDIR
 fi
