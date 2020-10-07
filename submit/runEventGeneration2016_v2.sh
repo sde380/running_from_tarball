@@ -132,8 +132,11 @@ scram p CMSSW CMSSW_10_2_18
 cd CMSSW_10_2_18/src
 eval `scram runtime -sh`
 
-scram b
-cd ../../
+cp ${BASEDIR}/input/nanotools.tar ./
+tar xvaf nanotools.tar 
+
+scram b -j 1
+mv ../../${outfilename}_miniaod.root ./${outfilename}_miniaod.root
 
 cp ${BASEDIR}/input/mc_NANO_2016.py ./${outfilename}_nanoaod_cfg.py
 
