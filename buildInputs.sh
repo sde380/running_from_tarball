@@ -54,6 +54,7 @@ if [ $2 = "mhs" ]; then
         cp ${BASEDIR}/inputs/${1}_hadronizer.py ./submit/input/
         cp inputs/aod_template2018.py ./submit/input/
         cp inputs/pu_files2018.py ./submit/input/
+        cp inputs/mc_NANO_2018.py ./submit/input/
         cp ${BASEDIR}/exec2018.sh $SUBMIT_WORKDIR
     fi
     
@@ -112,6 +113,7 @@ if [ $2 = "mjet" ]; then
         cp ${BASEDIR}/inputs/${1}_hadronizer.py ./submit/input/
         cp inputs/aod_template2018.py ./submit/input/
         cp inputs/pu_files2018.py ./submit/input/
+        cp inputs/mc_NANO_2018.py ./submit/input/
         cp ${BASEDIR}/exec2018.sh $SUBMIT_WORKDIR
     fi
     
