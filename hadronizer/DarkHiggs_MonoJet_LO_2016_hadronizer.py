@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 from Configuration.Generator.Pythia8CommonSettings_cfi import *
 from Configuration.Generator.Pythia8CUEP8M1Settings_cfi import *
 
-#print('Mass point is mz GeV for mediator, mchi GeV for dark matter, and mhs GeV for dark Higgs')
+#print('Mass point is mz GeV for mediator, and mchi GeV for dark matter)
 gridpack = '/cvmfs/cms.cern.ch/phys_generator/gridpacks/pre2017/13TeV/madgraph/V5_2.6.0/DarkHiggs/MonoJet/DarkHiggs_MonoJet_LO_MZprime-mz_Mchi-mchi_gSM-0p25_gDM-1p0_th-0p01_13TeV-madgraph_slc6_amd64_gcc630_CMSSW_9_3_8_tarball.tar.xz'
 
 externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
