@@ -59,7 +59,8 @@ cp ${BASEDIR}/input/${HADRONIZER} Configuration/GenProduction/python/
 
 scram b
 
-cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --datatier GEN-SIM,LHE --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step LHE,GEN,SIM --geometry DB:Extended --era Run2_2017 --python_filename ${outfilename}_gensim.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 300
+seed=$(($(date +%s) % 100 + 1))
+cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --datatier GEN-SIM,LHE --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step LHE,GEN,SIM --geometry DB:Extended --era Run2_2017 --python_filename ${outfilename}_gensim.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${seed})" -n 300
 
 # Run
 cmsRun ${outfilename}_gensim.py
@@ -90,61 +91,69 @@ sed -i 's/XX-AODFILE-XX/'${outfilename}'/g' ${outfilename}_cfg.py
 
 cmsRun ${outfilename}_cfg.py
 
-cmsDriver.py step2 --filein file:${outfilename}_step1.root --fileout file:${outfilename}_aod.root --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 94X_mc2017_realistic_v11 --step RAW2DIGI,RECO,RECOSIM,EI --nThreads 2 --era Run2_2017 --python_filename ${outfilename}_aod_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 500 
+cmsDriver.py step2 --filein file:${outfilename}_step1.root --fileout file:${outfilename}_aod.root --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 94X_mc2017_realistic_v11 --step RAW2DIGI,RECO,RECOSIM,EI --nThreads 2 --era Run2_2017 --python_filename ${outfilename}_aod_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 300 
 
 #Run
 cmsRun ${outfilename}_aod_cfg.py
 
-ls -ltrh
+ls -ltrh *aod.root
 
 #
 ############
 ############
 # Generate MiniAOD
 
-cmsDriver.py step3 --filein file:${outfilename}_aod.root --fileout file:${outfilename}_miniaod.root --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 94X_mc2017_realistic_v14 --step PAT --nThreads 2 --scenario pp --era Run2_2017,run2_miniAOD_94XFall17 --python_filename ${outfilename}_miniaod_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 500 
+cmsDriver.py step3 --filein file:${outfilename}_aod.root --fileout file:${outfilename}_miniaod.root --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 94X_mc2017_realistic_v14 --step PAT --nThreads 2 --scenario pp --era Run2_2017,run2_miniAOD_94XFall17 --python_filename ${outfilename}_miniaod_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 300 
 
 #Run
 cmsRun ${outfilename}_miniaod_cfg.py
 
-ls -ltrh
+ls -ltrh *miniaod.root
 
-copypath=$(readlink -f ./${outfilename}_miniaod.root)
-echo "${copypath} will be copied to EOS"
+OUTDIR=root://cmseos.fnal.gov//store/user/jongho/temp/
+echo ""
+echo "xrdcp output to ${OUTDIR}"
 
-#### Copy MiniAOD to EOS
-xrdcp file://${copypath} root://cmseos.fnal.gov//store/user/jongho/temp/${outfilename}_miniaod.root
+for FILE in *miniaod.root
+do
+    echo "command: xrdcp -f ${FILE} ${OUTDIR}/${FILE}"
+    xrdcp -f ${FILE} ${OUTDIR}/${FILE} 2>&1
+    XRDEXIT=$?
+    if [[ $XRDEXIT -ne 0 ]]; then
+        echo "exit code $XRDEXIT, failure in xrdcp"
+    fi
+done
 
 ###########
 ###########
 # Generate NanoAOD
-export SCRAM_ARCH=slc7_amd64_gcc700
-scram p CMSSW CMSSW_10_2_18
-cd CMSSW_10_2_18/src
-eval `scram runtime -sh`
-
-cp ${BASEDIR}/input/nanotools.tar ./
-tar xvaf nanotools.tar 
-
-scram b -j 1
-mv ../../${outfilename}_miniaod.root ./${outfilename}_miniaod.root
-
-cp ${BASEDIR}/input/mc_NANO_2017.py ./${outfilename}_nanoaod_cfg.py
-
-sed -i 's/XX-MINI-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py 
-sed -i 's/XX-NANO-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py
-
-#Run
-cmsRun ${outfilename}_nanoaod_cfg.py
-
-ls -ltrh
-
-###########
-###########
-# Stage out #v1
-copypath=$(readlink -f ./${outfilename}_nano.root)
-echo "${copypath} will be copied to EOS"
-
-xrdcp file://${copypath} root://cmseos.fnal.gov//store/user/jongho/temp/${outfilename}_nano.root
+#export SCRAM_ARCH=slc7_amd64_gcc700
+#scram p CMSSW CMSSW_10_2_18
+#cd CMSSW_10_2_18/src
+#eval `scram runtime -sh`
+#
+#cp ${BASEDIR}/input/nanotools.tar ./
+#tar xvaf nanotools.tar 
+#
+#scram b -j 1
+#mv ../../${outfilename}_miniaod.root ./${outfilename}_miniaod.root
+#
+#cp ${BASEDIR}/input/mc_NANO_2017.py ./${outfilename}_nanoaod_cfg.py
+#
+#sed -i 's/XX-MINI-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py 
+#sed -i 's/XX-NANO-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py
+#
+##Run
+#cmsRun ${outfilename}_nanoaod_cfg.py
+#
+#ls -ltrh
+#
+############
+############
+## Stage out #v1
+#copypath=$(readlink -f ./${outfilename}_nano.root)
+#echo "${copypath} will be copied to EOS"
+#
+#xrdcp file://${copypath} root://cmseos.fnal.gov//store/user/jongho/temp/${outfilename}_nano.root
 
 echo "DONE."

@@ -107,43 +107,51 @@ cmsDriver.py step3 --filein file:${outfilename}_aod.root --fileout file:${outfil
 #Run
 cmsRun ${outfilename}_miniaod_cfg.py
 
-ls -ltrh
+ls -ltrh *miniaod.root
 
-copypath=$(readlink -f ./${outfilename}_miniaod.root)
-echo "${copypath} will be copied to EOS"
+OUTDIR=root://cmseos.fnal.gov//store/user/jongho/temp/
+echo ""
+echo "xrdcp output to ${OUTDIR}"
 
-#### Copy MiniAOD to EOS
-xrdcp file://${copypath} root://cmseos.fnal.gov//store/user/jongho/temp/${outfilename}_miniaod.root
+for FILE in *miniaod.root
+do
+    echo "command: xrdcp -f ${FILE} ${OUTDIR}/${FILE}"
+    xrdcp -f ${FILE} ${OUTDIR}/${FILE} 2>&1
+    XRDEXIT=$?
+    if [[ $XRDEXIT -ne 0 ]]; then
+        echo "exit code $XRDEXIT, failure in xrdcp"
+    fi
+done
 
 ###########
 ###########
 # Generate NanoAOD
-scram p CMSSW CMSSW_10_2_18
-cd CMSSW_10_2_18/src
-eval `scram runtime -sh`
-
-cp ${BASEDIR}/input/nanotools.tar ./
-tar xvaf nanotools.tar 
-
-scram b -j 1
-mv ../../${outfilename}_miniaod.root ./${outfilename}_miniaod.root
-
-cp ${BASEDIR}/input/mc_NANO_2018.py ./${outfilename}_nanoaod_cfg.py
-
-sed -i 's/XX-MINI-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py 
-sed -i 's/XX-NANO-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py
-
-#Run
-cmsRun ${outfilename}_nanoaod_cfg.py
-
-ls -ltrh
-
-###########
-###########
-# Stage out #v1
-copypath=$(readlink -f ./${outfilename}_nano.root)
-echo "${copypath} will be copied to EOS"
-
-xrdcp file://${copypath} root://cmseos.fnal.gov//store/user/jongho/temp/${outfilename}_nano.root
+#scram p CMSSW CMSSW_10_2_18
+#cd CMSSW_10_2_18/src
+#eval `scram runtime -sh`
+#
+#cp ${BASEDIR}/input/nanotools.tar ./
+#tar xvaf nanotools.tar 
+#
+#scram b -j 1
+#mv ../../${outfilename}_miniaod.root ./${outfilename}_miniaod.root
+#
+#cp ${BASEDIR}/input/mc_NANO_2018.py ./${outfilename}_nanoaod_cfg.py
+#
+#sed -i 's/XX-MINI-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py 
+#sed -i 's/XX-NANO-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py
+#
+##Run
+#cmsRun ${outfilename}_nanoaod_cfg.py
+#
+#ls -ltrh
+#
+############
+############
+## Stage out #v1
+#copypath=$(readlink -f ./${outfilename}_nano.root)
+#echo "${copypath} will be copied to EOS"
+#
+#xrdcp file://${copypath} root://cmseos.fnal.gov//store/user/jongho/temp/${outfilename}_nano.root
 
 echo "DONE."
