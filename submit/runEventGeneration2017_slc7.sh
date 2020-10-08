@@ -59,6 +59,7 @@ cp ${BASEDIR}/input/${HADRONIZER} Configuration/GenProduction/python/
 
 scram b
 
+#seed=$(($(date +%s) % 100 + 1))
 cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --datatier GEN-SIM,LHE --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step LHE,GEN,SIM --geometry DB:Extended --era Run2_2017 --python_filename ${outfilename}_gensim.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="${RANDOMSEED}" -n 300
 
 # Run
@@ -109,10 +110,9 @@ cmsRun ${outfilename}_miniaod_cfg.py
 
 ls -ltrh *miniaod.root
 
-OUTDIR=root://cmseos.fnal.gov//store/user/jongho/temp/
 #OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs50GeV_2017/Mz3000_Mdm1500
 #OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs70GeV_2017/Mz3000_Mdm1500
-#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs90GeV_2017/Mz3000_Mdm1500
+OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs90GeV_2017/Mz3000_Mdm1500
 echo ""
 echo "xrdcp output to ${OUTDIR}"
 
@@ -150,13 +150,17 @@ cmsRun ${outfilename}_nanoaod_cfg.py
 
 ls -ltrh *nano.root
 
+#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2017/Mz3000_mhs50_Mdm1500
+#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2017/Mz3000_mhs70_Mdm1500
+OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2017/Mz3000_mhs90_Mdm1500
+
 echo ""
-echo "xrdcp output to ${OUTDIR}"
+echo "xrdcp output to ${OUTDIRnano}"
 
 for FILE in *nano.root
 do
-    echo "command: xrdcp -f ${FILE} ${OUTDIR}/${FILE}"
-    xrdcp -f ${FILE} ${OUTDIR}/${FILE} 2>&1
+    echo "command: xrdcp -f ${FILE} ${OUTDIRnano}/${FILE}"
+    xrdcp -f ${FILE} ${OUTDIRnano}/${FILE} 2>&1
     XRDEXIT=$?
     if [[ $XRDEXIT -ne 0 ]]; then
         echo "exit code $XRDEXIT, failure in xrdcp"
