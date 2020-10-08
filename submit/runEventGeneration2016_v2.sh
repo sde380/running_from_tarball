@@ -59,7 +59,7 @@ cp ${BASEDIR}/input/${HADRONIZER} Configuration/GenProduction/python/
 
 scram b
 
-cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM,LHE --conditions MCRUN2_71_V1::All --beamspot Realistic50ns13TeVCollision --step LHE,GEN,SIM --magField 38T_PostLS1 --python_filename ${outfilename}_gensim.py --no_exec -n 300 
+cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM,LHE --conditions MCRUN2_71_V1::All --beamspot Realistic50ns13TeVCollision --step LHE,GEN,SIM --magField 38T_PostLS1 --python_filename ${outfilename}_gensim.py --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="${RANDOMSEED}" --no_exec -n 300 
 
 
 # Run
@@ -116,13 +116,21 @@ cmsDriver.py step3 --filein file:${outfilename}_aod.root --fileout file:${outfil
 #Run
 cmsRun ${outfilename}_miniaod_cfg.py
 
-ls -ltrh
+ls -ltrh *miniaod.root
 
-copypath=$(readlink -f ./${outfilename}_miniaod.root)
-echo "${copypath} will be copied to EOS"
+OUTDIR=root://cmseos.fnal.gov//store/user/jongho/temp/
+echo ""
+echo "xrdcp output to ${OUTDIR}"
 
-#### Copy MiniAOD to EOS
-xrdcp file://${copypath} root://cmseos.fnal.gov//store/user/jongho/temp/${outfilename}_miniaod.root
+for FILE in *miniaod.root
+do
+    echo "command: xrdcp -f ${FILE} ${OUTDIR}/${FILE}"
+    xrdcp -f ${FILE} ${OUTDIR}/${FILE} 2>&1
+    XRDEXIT=$?
+    if [[ $XRDEXIT -ne 0 ]]; then
+        echo "exit code $XRDEXIT, failure in xrdcp"
+    fi
+done
 
 ###########
 ###########
@@ -146,14 +154,22 @@ sed -i 's/XX-NANO-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py
 #Run
 cmsRun ${outfilename}_nanoaod_cfg.py
 
-ls -ltrh
+ls -ltrh *nano.root
+
+echo ""
+echo "xrdcp output to ${OUTDIR}"
+
+for FILE in *nano.root
+do
+    echo "command: xrdcp -f ${FILE} ${OUTDIR}/${FILE}"
+    xrdcp -f ${FILE} ${OUTDIR}/${FILE} 2>&1
+    XRDEXIT=$?
+    if [[ $XRDEXIT -ne 0 ]]; then
+        echo "exit code $XRDEXIT, failure in xrdcp"
+    fi
+done
 
 ###########
 ###########
-# Stage out #v1
-copypath=$(readlink -f ./${outfilename}_nano.root)
-echo "${copypath} will be copied to EOS"
-
-xrdcp file://${copypath} root://cmseos.fnal.gov//store/user/jongho/temp/${outfilename}_nano.root
 
 echo "DONE."

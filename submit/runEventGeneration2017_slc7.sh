@@ -59,8 +59,7 @@ cp ${BASEDIR}/input/${HADRONIZER} Configuration/GenProduction/python/
 
 scram b
 
-seed=$(($(date +%s) % 100 + 1))
-cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --datatier GEN-SIM,LHE --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step LHE,GEN,SIM --geometry DB:Extended --era Run2_2017 --python_filename ${outfilename}_gensim.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${seed})" -n 300
+cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --datatier GEN-SIM,LHE --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step LHE,GEN,SIM --geometry DB:Extended --era Run2_2017 --python_filename ${outfilename}_gensim.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="${RANDOMSEED}" -n 300
 
 # Run
 cmsRun ${outfilename}_gensim.py
@@ -111,6 +110,9 @@ cmsRun ${outfilename}_miniaod_cfg.py
 ls -ltrh *miniaod.root
 
 OUTDIR=root://cmseos.fnal.gov//store/user/jongho/temp/
+#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs50GeV_2017/Mz3000_Mdm1500
+#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs70GeV_2017/Mz3000_Mdm1500
+#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs90GeV_2017/Mz3000_Mdm1500
 echo ""
 echo "xrdcp output to ${OUTDIR}"
 
@@ -127,33 +129,42 @@ done
 ###########
 ###########
 # Generate NanoAOD
-#export SCRAM_ARCH=slc7_amd64_gcc700
-#scram p CMSSW CMSSW_10_2_18
-#cd CMSSW_10_2_18/src
-#eval `scram runtime -sh`
-#
-#cp ${BASEDIR}/input/nanotools.tar ./
-#tar xvaf nanotools.tar 
-#
-#scram b -j 1
-#mv ../../${outfilename}_miniaod.root ./${outfilename}_miniaod.root
-#
-#cp ${BASEDIR}/input/mc_NANO_2017.py ./${outfilename}_nanoaod_cfg.py
-#
-#sed -i 's/XX-MINI-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py 
-#sed -i 's/XX-NANO-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py
-#
-##Run
-#cmsRun ${outfilename}_nanoaod_cfg.py
-#
-#ls -ltrh
-#
-############
-############
-## Stage out #v1
-#copypath=$(readlink -f ./${outfilename}_nano.root)
-#echo "${copypath} will be copied to EOS"
-#
-#xrdcp file://${copypath} root://cmseos.fnal.gov//store/user/jongho/temp/${outfilename}_nano.root
+export SCRAM_ARCH=slc7_amd64_gcc700
+scram p CMSSW CMSSW_10_2_18
+cd CMSSW_10_2_18/src
+eval `scram runtime -sh`
 
+cp ${BASEDIR}/input/nanotools.tar ./
+tar xvaf nanotools.tar 
+
+scram b -j 1
+mv ../../${outfilename}_miniaod.root ./${outfilename}_miniaod.root
+
+cp ${BASEDIR}/input/mc_NANO_2017.py ./${outfilename}_nanoaod_cfg.py
+
+sed -i 's/XX-MINI-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py 
+sed -i 's/XX-NANO-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py
+
+#Run
+cmsRun ${outfilename}_nanoaod_cfg.py
+
+ls -ltrh *nano.root
+
+echo ""
+echo "xrdcp output to ${OUTDIR}"
+
+for FILE in *nano.root
+do
+    echo "command: xrdcp -f ${FILE} ${OUTDIR}/${FILE}"
+    xrdcp -f ${FILE} ${OUTDIR}/${FILE} 2>&1
+    XRDEXIT=$?
+    if [[ $XRDEXIT -ne 0 ]]; then
+        echo "exit code $XRDEXIT, failure in xrdcp"
+    fi
+done
+
+###########
+###########
+
+echo ""
 echo "DONE."
