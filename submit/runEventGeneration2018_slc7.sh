@@ -50,8 +50,8 @@ outfilename="${outfilename_tmp//[[:space:]]/}"
 # Generate GEN-SIM
 
 export SCRAM_ARCH=slc7_amd64_gcc700
-scram p CMSSW CMSSW_10_2_16_patch2
-cd CMSSW_10_2_16_patch2/src
+scram p CMSSW CMSSW_10_2_18
+cd CMSSW_10_2_18/src
 eval `scram runtime -sh`
 
 mkdir -p Configuration/GenProduction/python/
@@ -75,12 +75,6 @@ ls -ltrh
 ############
 ############
 # Generate AOD
-
-scram p CMSSW CMSSW_10_2_5
-cd CMSSW_10_2_5/src
-eval `scram runtime -sh`
-scram b
-cd ../../
 
 cp ${BASEDIR}/input/pu_files2018.py ./
 cp ${BASEDIR}/input/aod_template2018.py ./${outfilename}_cfg.py
@@ -126,10 +120,8 @@ done
 ###########
 ###########
 # Generate NanoAOD
-scram p CMSSW CMSSW_10_2_18
-cd CMSSW_10_2_18/src
-eval `scram runtime -sh`
 
+cd CMSSW_10_2_18/src
 cp ${BASEDIR}/input/nanotools.tar ./
 tar xvaf nanotools.tar 
 
