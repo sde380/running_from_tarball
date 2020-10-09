@@ -50,8 +50,7 @@ if [ $2 = "mhs" ]; then
     fi
 
     if [ ${year} -eq 2018 ]; then
-        cp ${BASEDIR}/inputs/${1}_tarball.tar.xz ./submit/input/
-        cp ${BASEDIR}/inputs/${1}_hadronizer.py ./submit/input/
+        mv ${BASEDIR}/inputs/${1}_MZprime-${mZ}_Mhs-${mHS}_Mchi-${mCHI}_hadronizer.py ./submit/input/
         cp inputs/aod_template2018.py ./submit/input/
         cp inputs/pu_files2018.py ./submit/input/
         cp inputs/mc_NANO_2018.py ./submit/input/
@@ -109,8 +108,7 @@ if [ $2 = "mjet" ]; then
     fi
 
     if [ ${year} -eq 2018 ]; then
-        cp ${BASEDIR}/inputs/${1}_tarball.tar.xz ./submit/input/
-        cp ${BASEDIR}/inputs/${1}_hadronizer.py ./submit/input/
+        mv ${BASEDIR}/inputs/${1}_MZprime-${mZ}_Mchi-${mCHI}_hadronizer.py ./submit/input/
         cp inputs/aod_template2018.py ./submit/input/
         cp inputs/pu_files2018.py ./submit/input/
         cp inputs/mc_NANO_2018.py ./submit/input/
