@@ -20,7 +20,7 @@ output = {1}/$(Cluster)_$(Process).out
 error = {1}/$(Cluster)_$(Process).err
 log = {1}/$(Cluster)_$(Process).log
 arguments = $(Process)
-+SingularityImage = "/cvmfs/unpacked.cern.ch/registry.hub.docker.com/cmssw/slc6:amd64"
++SingularityImage = "/cvmfs/singularity.opensciencegrid.org/bbockelm/cms:rhel6"
 request_memory = 4096
 queue {3}
 '''.format(workpath,logpath,uid,njobs)
