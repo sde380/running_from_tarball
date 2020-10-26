@@ -9,6 +9,12 @@ export BASEDIR=`pwd`
 echo "Starting job on " `date` #Date/time of start of job
 echo "Running on: `uname -a`" #Condor job is running on this node
 echo "System software: `cat /etc/redhat-release`" #Operating System on that node
+echo "Printing the environment variables"
+printenv
+echo ""
+echo ""
+pwd 
+ls -alh /srv
 
 ############
 # inputs
@@ -59,7 +65,7 @@ cp ${BASEDIR}/input/${HADRONIZER} Configuration/GenProduction/python/
 
 scram b
 
-cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM,LHE --conditions MCRUN2_71_V1::All --beamspot Realistic50ns13TeVCollision --step LHE,GEN,SIM --magField 38T_PostLS1 --python_filename ${outfilename}_gensim.py --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="${RANDOMSEED}" --no_exec -n 300 
+cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM,LHE --conditions MCRUN2_71_V1::All --beamspot Realistic50ns13TeVCollision --step LHE,GEN,SIM --magField 38T_PostLS1 --python_filename ${outfilename}_gensim.py --no_exec --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="${RANDOMSEED}" -n 5
 
 
 # Run
@@ -92,7 +98,9 @@ sed -i 's/XX-AODFILE-XX/'${outfilename}'/g' ${outfilename}_cfg.py
 
 cmsRun ${outfilename}_cfg.py
 
-cmsDriver.py step2 --filein file:${outfilename}_step1.root --fileout ${outfilename}_aod.root --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,RECO,EI --nThreads 2 --era Run2_2016 --python_filename ${outfilename}_aod_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 500
+ls -ltrh
+
+cmsDriver.py step2 --filein file:${outfilename}_step1.root --fileout file:${outfilename}_aod.root --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,RECO,EI --nThreads 2 --era Run2_2016 --python_filename ${outfilename}_aod_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 500
 
 #Run
 cmsRun ${outfilename}_aod_cfg.py
@@ -118,7 +126,14 @@ cmsRun ${outfilename}_miniaod_cfg.py
 
 ls -ltrh *miniaod.root
 
-OUTDIR=root://cmseos.fnal.gov//store/user/jongho/temp/
+### mono-hs samples ###
+#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs50GeV_2016/Mz2500_Mdm750
+#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs70GeV_2016/Mz2500_Mdm750
+OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs90GeV_2016/Mz2500_Mdm750
+
+### mono-jet sample ###
+#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoJet/2017/Mz200_Mdm100
+
 echo ""
 echo "xrdcp output to ${OUTDIR}"
 
@@ -156,13 +171,21 @@ cmsRun ${outfilename}_nanoaod_cfg.py
 
 ls -ltrh *nano.root
 
+### mono-hs samples ###
+#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz2500_mhs50_Mdm750
+#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz2500_mhs70_Mdm750
+OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz2500_mhs90_Mdm750
+
+### mono-jet sample ###
+#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2017/Mz200_mj_Mdm100
+
 echo ""
-echo "xrdcp output to ${OUTDIR}"
+echo "xrdcp output to ${OUTDIRnano}"
 
 for FILE in *nano.root
 do
-    echo "command: xrdcp -f ${FILE} ${OUTDIR}/${FILE}"
-    xrdcp -f ${FILE} ${OUTDIR}/${FILE} 2>&1
+    echo "command: xrdcp -f ${FILE} ${OUTDIRnano}/${FILE}"
+    xrdcp -f ${FILE} ${OUTDIRnano}/${FILE} 2>&1
     XRDEXIT=$?
     if [[ $XRDEXIT -ne 0 ]]; then
         echo "exit code $XRDEXIT, failure in xrdcp"
@@ -172,4 +195,5 @@ done
 ###########
 ###########
 
+echo ""
 echo "DONE."
