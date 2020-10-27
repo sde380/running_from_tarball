@@ -2,13 +2,27 @@
 BASEDIR=${PWD}
 
 ##### Change mass point ####
-mZ=1000
+mZ=2000
 mHS=50
-mCHI=150
+mCHI=1500
 year=${3}
 
 mkdir -p ./submit/input/
 cp ./inputs/nanotools.tar ./submit/input/
+
+name=$(echo ${1})
+YEAR=$(echo ${name} | cut -d "_" -f 4)
+
+if [ ${year} -ne ${YEAR} ]; then
+    echo ""
+    echo "Selected year from hadronizer is ${YEAR}"
+    echo "However your input year is ${year}"
+    echo "Please check your input arguments!"
+    echo ""
+
+    exit 1
+fi
+
 
 if [ $2 = "mhs" ]; then
 
@@ -28,6 +42,7 @@ if [ $2 = "mhs" ]; then
     echo "PROCESS=${1}_MZprime-${mZ}_Mhs-${mHS}_Mchi-${mCHI}" >> ./submit/inputs.sh
     echo "USERNAME=${USER}" >> ./submit/inputs.sh
 
+    echo "Directory name: work_${1}_MZprime-${mZ}_Mhs-${mHS}_Mchi-${mCHI}"
     rm -r work_${1}_MZprime-${mZ}_Mhs-${mHS}_Mchi-${mCHI}
     mkdir -p work_${1}_MZprime-${mZ}_Mhs-${mHS}_Mchi-${mCHI}
     SUBMIT_WORKDIR=${BASEDIR}/work_${1}_MZprime-${mZ}_Mhs-${mHS}_Mchi-${mCHI}
