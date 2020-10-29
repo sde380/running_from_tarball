@@ -3,15 +3,15 @@ BASEDIR=${PWD}
 
 ##### Change mass point ####
 mZ=2000
-mHS=50
-mCHI=1500
-year=${3}
+mHS=90
+mCHI=500
+year=${2}
 
 mkdir -p ./submit/input/
 cp ./inputs/nanotools.tar ./submit/input/
 
-name=$(echo ${1})
-YEAR=$(echo ${name} | cut -d "_" -f 4)
+data=$(echo ${1} | cut -d "_" -f 2)
+YEAR=$(echo ${1} | cut -d "_" -f 4)
 
 if [ ${year} -ne ${YEAR} ]; then
     echo ""
@@ -24,7 +24,7 @@ if [ ${year} -ne ${YEAR} ]; then
 fi
 
 
-if [ $2 = "mhs" ]; then
+if [ ${data} = "MonoHs" ]; then
 
     echo "You're producing mono dark Higgs sample!"
     cp ${BASEDIR}/inputs/${1}_hadronizer.py ${BASEDIR}/inputs/${1}_MZprime-${mZ}_Mhs-${mHS}_Mchi-${mCHI}_hadronizer.py
@@ -84,7 +84,7 @@ if [ $2 = "mhs" ]; then
     ls -lh $SUBMIT_WORKDIR
 fi
 
-if [ $2 = "mjet" ]; then
+if [ ${data} = "MonoJet" ]; then
 
     echo "You're producing monojet sample!"
     cp ${BASEDIR}/inputs/${1}_hadronizer.py ${BASEDIR}/inputs/${1}_MZprime-${mZ}_Mchi-${mCHI}_hadronizer.py
