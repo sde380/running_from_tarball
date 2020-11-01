@@ -132,7 +132,7 @@ ls -ltrh *miniaod.root
 OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs90GeV_2016/Mz3000_Mdm1000
 
 ### mono-jet sample ###
-#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoJet/2017/Mz200_Mdm100
+#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoJet/2016/Mz200_Mdm100
 
 echo ""
 echo "xrdcp output to ${OUTDIR}"
@@ -177,7 +177,7 @@ ls -ltrh *nano.root
 OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz3000_mhs90_Mdm1000
 
 ### mono-jet sample ###
-#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2017/Mz200_mj_Mdm100
+#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz200_mj_Mdm100
 
 echo ""
 echo "xrdcp output to ${OUTDIRnano}"
