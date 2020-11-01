@@ -19,6 +19,6 @@ https://github.com/Quantumapple/running_from_tarball/blob/jongho/submit/runEvent
 ## Run
 
 ```bash
-bash buildInputs.sh DarkHiggs_MonoHs/Jet_LO_2017/2018 mhs/mjet 2016/2017/2018
+bash buildInputs.sh DarkHiggs_MonoHs/Jet_LO_2016/2017/2018 2016/2017/2018
 python submit_slc7.py $work_directory $njobs
 ```
