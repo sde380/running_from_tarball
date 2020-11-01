@@ -65,7 +65,7 @@ cp ${BASEDIR}/input/${HADRONIZER} Configuration/GenProduction/python/
 
 scram b
 
-cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM,LHE --conditions MCRUN2_71_V1::All --beamspot Realistic50ns13TeVCollision --step LHE,GEN,SIM --magField 38T_PostLS1 --python_filename ${outfilename}_gensim.py --no_exec --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="${RANDOMSEED}" -n 5
+cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM,LHE --conditions MCRUN2_71_V1::All --beamspot Realistic50ns13TeVCollision --step LHE,GEN,SIM --magField 38T_PostLS1 --python_filename ${outfilename}_gensim.py --no_exec --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="${RANDOMSEED}" -n 300
 
 
 # Run
@@ -127,9 +127,9 @@ cmsRun ${outfilename}_miniaod_cfg.py
 ls -ltrh *miniaod.root
 
 ### mono-hs samples ###
-#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs50GeV_2016/Mz2500_Mdm750
-#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs70GeV_2016/Mz2500_Mdm750
-OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs90GeV_2016/Mz2500_Mdm750
+#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs50GeV_2016/Mz3000_Mdm1000
+#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs70GeV_2016/Mz3000_Mdm1000
+OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs90GeV_2016/Mz3000_Mdm1000
 
 ### mono-jet sample ###
 #OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoJet/2017/Mz200_Mdm100
@@ -172,9 +172,9 @@ cmsRun ${outfilename}_nanoaod_cfg.py
 ls -ltrh *nano.root
 
 ### mono-hs samples ###
-#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz2500_mhs50_Mdm750
-#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz2500_mhs70_Mdm750
-OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz2500_mhs90_Mdm750
+#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz3000_mhs50_Mdm1000
+#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz3000_mhs70_Mdm1000
+OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz3000_mhs90_Mdm1000
 
 ### mono-jet sample ###
 #OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2017/Mz200_mj_Mdm100
