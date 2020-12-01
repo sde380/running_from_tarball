@@ -104,12 +104,12 @@ cmsRun ${outfilename}_miniaod_cfg.py
 ls -ltrh *miniaod.root
 
 ### mono-hs samples ###
-#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs50GeV_2018/Mz3000_Mdm1500
-#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs70GeV_2018/Mz3000_Mdm1500
-#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs90GeV_2018/Mz3000_Mdm1500
+#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs50GeV_2017/Mz2000_Mdm500
+#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs70GeV_2017/Mz2000_Mdm500
+#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs90GeV_2017/Mz2000_Mdm500
 
 ### mono-jet sample ###
-#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoJet/2018/Mz200_Mdm100
+OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoJet/2018/Mz200_Mdm100
 
 echo ""
 echo "xrdcp output to ${OUTDIR}"
@@ -146,12 +146,12 @@ cmsRun ${outfilename}_nanoaod_cfg.py
 ls -ltrh *nano.root
 
 ### mono-hs samples ###
-#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2018/Mz3000_mhs50_Mdm1500
-#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2018/Mz3000_mhs70_Mdm1500
-#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2018/Mz3000_mhs90_Mdm1500
+#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2018/Mz2000_mhs50_Mdm500
+#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2018/Mz2000_mhs70_Mdm500
+#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2018/Mz2000_mhs90_Mdm500
 
 ### mono-jet sample ###
-#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2018/Mz200_mj_Mdm100
+OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2018/Mz200_mj_Mdm100
 
 echo ""
 echo "xrdcp output to ${OUTDIRnano}"
