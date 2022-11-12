@@ -20,20 +20,7 @@ source ./inputs.sh
 #
 #############
 #############
-# make a working area
-
-echo " Start to work now"
-pwd
-mkdir -p ./work
-cd    ./work
-export WORKDIR=`pwd`
-
-#
-#############
-#############
 # Set random number
-
-ls -lhrt
 
 RANDOMSEED=`od -vAn -N4 -tu4 < /dev/urandom`
 
@@ -43,6 +30,35 @@ RANDOMSEED=`echo $RANDOMSEED | rev | cut -c 3- | rev`
 TempNumber=${RANDOMSEED}
 outfilename_tmp="$PROCESS"'_'"$RANDOMSEED"
 outfilename="${outfilename_tmp//[[:space:]]/}"
+
+#
+#############
+#############
+# Move gridpack to tmp+random number directory
+# Also do sed to give the correct path to the gridpack
+
+mkdir -p /tmp/dir_${TempNumber}
+mv input/*tar.xz /tmp/dir_${TempNumber}/
+
+echo "Random number is ${TempNumber}"
+ls -ltrh /tmp/
+ls -ltrh /tmp/dir_${TempNumber}
+echo ""
+
+sed -i "s/dirname/dir_${TempNumber}/g" input/${HADRONIZER} 
+cat input/${HADRONIZER} | grep "prefix ="
+echo ""
+
+#
+#############
+#############
+# make a working area
+
+echo " Start to work now"
+pwd
+mkdir -p ./work
+cd    ./work
+export WORKDIR=`pwd`
 
 #
 #############
@@ -59,7 +75,6 @@ cp ${BASEDIR}/input/${HADRONIZER} Configuration/GenProduction/python/
 
 scram b
 
-#seed=$(($(date +%s) % 100 + 1))
 cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --datatier GEN-SIM,LHE --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step LHE,GEN,SIM --geometry DB:Extended --era Run2_2017 --python_filename ${outfilename}_gensim.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="${RANDOMSEED}" -n 300
 
 # Run
@@ -112,19 +127,19 @@ ls -ltrh *miniaod.root
 
 #OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs50GeV_2017/Mz3000_Mdm1500
 #OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs70GeV_2017/Mz3000_Mdm1500
-OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs90GeV_2017/Mz3000_Mdm1500
-echo ""
-echo "xrdcp output to ${OUTDIR}"
-
-for FILE in *miniaod.root
-do
-    echo "command: xrdcp -f ${FILE} ${OUTDIR}/${FILE}"
-    xrdcp -f ${FILE} ${OUTDIR}/${FILE} 2>&1
-    XRDEXIT=$?
-    if [[ $XRDEXIT -ne 0 ]]; then
-        echo "exit code $XRDEXIT, failure in xrdcp"
-    fi
-done
+#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs90GeV_2017/Mz3000_Mdm1500
+#echo ""
+#echo "xrdcp output to ${OUTDIR}"
+#
+#for FILE in *miniaod.root
+#do
+#    echo "command: xrdcp -f ${FILE} ${OUTDIR}/${FILE}"
+#    xrdcp -f ${FILE} ${OUTDIR}/${FILE} 2>&1
+#    XRDEXIT=$?
+#    if [[ $XRDEXIT -ne 0 ]]; then
+#        echo "exit code $XRDEXIT, failure in xrdcp"
+#    fi
+#done
 
 ###########
 ###########
@@ -152,7 +167,7 @@ ls -ltrh *nano.root
 
 #OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2017/Mz3000_mhs50_Mdm1500
 #OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2017/Mz3000_mhs70_Mdm1500
-OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2017/Mz3000_mhs90_Mdm1500
+OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2017/Mz995_mhs110_Mdm500
 
 echo ""
 echo "xrdcp output to ${OUTDIRnano}"

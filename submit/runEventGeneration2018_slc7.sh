@@ -20,20 +20,8 @@ source ./inputs.sh
 #
 #############
 #############
-# make a working area
-
-echo " Start to work now"
-pwd
-mkdir -p ./work
-cd    ./work
-export WORKDIR=`pwd`
-
-#
-#############
-#############
 # Set random number
 
-ls -lhrt
 
 RANDOMSEED=`od -vAn -N4 -tu4 < /dev/urandom`
 
@@ -43,6 +31,35 @@ RANDOMSEED=`echo $RANDOMSEED | rev | cut -c 3- | rev`
 TempNumber=${RANDOMSEED}
 outfilename_tmp="$PROCESS"'_'"$RANDOMSEED"
 outfilename="${outfilename_tmp//[[:space:]]/}"
+
+#
+#############
+#############
+# Move gridpack to tmp+random number directory
+# Also do sed to give the correct path to the gridpack
+
+mkdir -p /tmp/dir_${TempNumber}
+mv input/*tar.xz /tmp/dir_${TempNumber}/
+
+echo "Random number is ${TempNumber}"
+ls -ltrh /tmp/
+ls -ltrh /tmp/dir_${TempNumber}
+echo ""
+
+sed -i "s/dirname/dir_${TempNumber}/g" input/${HADRONIZER} 
+cat input/${HADRONIZER} | grep "prefix ="
+echo ""
+
+#
+#############
+#############
+# make a working area
+
+echo " Start to work now"
+pwd
+mkdir -p ./work
+cd    ./work
+export WORKDIR=`pwd`
 
 #
 #############

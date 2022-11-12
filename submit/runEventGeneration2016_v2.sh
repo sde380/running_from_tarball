@@ -26,20 +26,7 @@ source ./inputs.sh
 #
 #############
 #############
-# make a working area
-
-echo " Start to work now"
-pwd
-mkdir -p ./work
-cd    ./work
-export WORKDIR=`pwd`
-
-#
-#############
-#############
 # Set random number
-
-ls -lhrt
 
 RANDOMSEED=`od -vAn -N4 -tu4 < /dev/urandom`
 
@@ -49,6 +36,35 @@ RANDOMSEED=`echo $RANDOMSEED | rev | cut -c 3- | rev`
 TempNumber=${RANDOMSEED}
 outfilename_tmp="$PROCESS"'_'"$RANDOMSEED"
 outfilename="${outfilename_tmp//[[:space:]]/}"
+
+#
+#############
+#############
+# Move gridpack to tmp+random number directory
+# Also do sed to give the correct path to the gridpack
+
+mkdir -p /tmp/dir_${TempNumber}
+mv input/*tar.xz /tmp/dir_${TempNumber}/
+
+echo "Random number is ${TempNumber}"
+ls -ltrh /tmp/
+ls -ltrh /tmp/dir_${TempNumber}
+echo ""
+
+sed -i "s/dirname/dir_${TempNumber}/g" input/${HADRONIZER} 
+cat input/${HADRONIZER} | grep "prefix ="
+echo ""
+
+#
+#############
+#############
+# make a working area
+
+echo " Start to work now"
+pwd
+mkdir -p ./work
+cd    ./work
+export WORKDIR=`pwd`
 
 #
 #############
@@ -65,7 +81,7 @@ cp ${BASEDIR}/input/${HADRONIZER} Configuration/GenProduction/python/
 
 scram b
 
-cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM,LHE --conditions MCRUN2_71_V1::All --beamspot Realistic50ns13TeVCollision --step LHE,GEN,SIM --magField 38T_PostLS1 --python_filename ${outfilename}_gensim.py --no_exec --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="${RANDOMSEED}" -n 300
+cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM,LHE --conditions MCRUN2_71_V1::All --beamspot Realistic50ns13TeVCollision --step LHE,GEN,SIM --magField 38T_PostLS1 --python_filename ${outfilename}_gensim.py --no_exec --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${RANDOMSEED})" -n 300
 
 
 # Run
@@ -129,23 +145,23 @@ ls -ltrh *miniaod.root
 ### mono-hs samples ###
 #OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs50GeV_2016/Mz3000_Mdm1000
 #OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs70GeV_2016/Mz3000_Mdm1000
-OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs90GeV_2016/Mz3000_Mdm1000
+#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs90GeV_2016/Mz3000_Mdm1000
 
 ### mono-jet sample ###
 #OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoJet/2016/Mz200_Mdm100
 
-echo ""
-echo "xrdcp output to ${OUTDIR}"
-
-for FILE in *miniaod.root
-do
-    echo "command: xrdcp -f ${FILE} ${OUTDIR}/${FILE}"
-    xrdcp -f ${FILE} ${OUTDIR}/${FILE} 2>&1
-    XRDEXIT=$?
-    if [[ $XRDEXIT -ne 0 ]]; then
-        echo "exit code $XRDEXIT, failure in xrdcp"
-    fi
-done
+#echo ""
+#echo "xrdcp output to ${OUTDIR}"
+#
+#for FILE in *miniaod.root
+#do
+#    echo "command: xrdcp -f ${FILE} ${OUTDIR}/${FILE}"
+#    xrdcp -f ${FILE} ${OUTDIR}/${FILE} 2>&1
+#    XRDEXIT=$?
+#    if [[ $XRDEXIT -ne 0 ]]; then
+#        echo "exit code $XRDEXIT, failure in xrdcp"
+#    fi
+#done
 
 ###########
 ###########
@@ -174,7 +190,7 @@ ls -ltrh *nano.root
 ### mono-hs samples ###
 #OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz3000_mhs50_Mdm1000
 #OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz3000_mhs70_Mdm1000
-OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz3000_mhs90_Mdm1000
+OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz1000_mhs110_Mdm500
 
 ### mono-jet sample ###
 #OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/Mz200_mj_Mdm100
