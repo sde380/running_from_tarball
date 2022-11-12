@@ -125,22 +125,6 @@ cmsRun ${outfilename}_miniaod_cfg.py
 
 ls -ltrh *miniaod.root
 
-#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs50GeV_2017/Mz3000_Mdm1500
-#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs70GeV_2017/Mz3000_Mdm1500
-#OUTDIR=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/MonoDarkHiggs/mhs90GeV_2017/Mz3000_Mdm1500
-#echo ""
-#echo "xrdcp output to ${OUTDIR}"
-#
-#for FILE in *miniaod.root
-#do
-#    echo "command: xrdcp -f ${FILE} ${OUTDIR}/${FILE}"
-#    xrdcp -f ${FILE} ${OUTDIR}/${FILE} 2>&1
-#    XRDEXIT=$?
-#    if [[ $XRDEXIT -ne 0 ]]; then
-#        echo "exit code $XRDEXIT, failure in xrdcp"
-#    fi
-#done
-
 ###########
 ###########
 # Generate NanoAOD
