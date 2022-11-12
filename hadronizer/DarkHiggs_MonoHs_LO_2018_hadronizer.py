@@ -5,7 +5,7 @@ from Configuration.Generator.MCTunes2017.PythiaCP5Settings_cfi import *
 from Configuration.Generator.PSweightsPythia.PythiaPSweightsSettings_cfi import *
 
 #print('Mass point is mz GeV for mediator, mchi GeV for dark matter, and mhs GeV for dark Higgs')
-prefix = 'root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/gridpacks/'
+prefix = '/tmp/dirname/'
 gridpack = 'DarkHiggs_MonoHs_LO_MZprime-mz_Mhs-mhs_Mchi-mchi_gSM-0p25_gDM-1p0_th-0p01_13TeV-madgraph_slc7_amd64_gcc630_CMSSW_9_3_8_tarball.tar.xz'
 fpath = prefix+gridpack
 
