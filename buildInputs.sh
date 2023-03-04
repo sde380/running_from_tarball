@@ -46,6 +46,12 @@ if [ ${data} = "MonoHs" ]; then
         cp inputs/pu_files2016.py ./submit/input/
         cp inputs/mc_NANO_2016.py ./submit/input/
         cp ${BASEDIR}/exec2016.sh $SUBMIT_WORKDIR
+        # Change output dir
+        outdirname=Mz${mZ}_Mhs${mHS}_Mdm${mCHI}
+        cp scripts/runEventGeneration2016_v2.sh ./submit/ 
+        sed -i "s/changeME/${outdirname}/g" ./submit/runEventGeneration2016_v2.sh
+        eos root://cmseos.fnal.gov mkdir -p /store/user/jongho/DarkHiggs/NanoAODv6/${year}/${outdirname}
+        eos root://cmseos.fnal.gov ls /store/user/jongho/DarkHiggs/NanoAODv6/${year} | grep --color=auto "${outdirname}"
     fi
 
     if [ ${year} -eq 2017 ]; then
@@ -55,6 +61,10 @@ if [ ${data} = "MonoHs" ]; then
         cp inputs/pu_files2017.py ./submit/input/
         cp inputs/mc_NANO_2017.py ./submit/input/
         cp ${BASEDIR}/exec2017.sh $SUBMIT_WORKDIR
+        cp scripts/runEventGeneration2017_slc7.sh ./submit/ 
+        sed -i "s/changeME/${outdirname}/g" ./submit/runEventGeneration2017_slc7.sh
+        eos root://cmseos.fnal.gov mkdir -p /store/user/jongho/DarkHiggs/NanoAODv6/${year}/${outdirname}
+        eos root://cmseos.fnal.gov ls /store/user/jongho/DarkHiggs/NanoAODv6/${year} | grep --color=auto "${outdirname}"
     fi
 
     if [ ${year} -eq 2018 ]; then
@@ -64,6 +74,12 @@ if [ ${data} = "MonoHs" ]; then
         cp inputs/pu_files2018.py ./submit/input/
         cp inputs/mc_NANO_2018.py ./submit/input/
         cp ${BASEDIR}/exec2018.sh $SUBMIT_WORKDIR
+        # Change output dir
+        outdirname=Mz${mZ}_Mhs${mHS}_Mdm${mCHI}
+        cp scripts/runEventGeneration2018_slc7.sh ./submit/ 
+        sed -i "s/changeME/${outdirname}/g" ./submit/runEventGeneration2018_slc7.sh
+        eos root://cmseos.fnal.gov mkdir -p /store/user/jongho/DarkHiggs/NanoAODv6/${year}/${outdirname}
+        eos root://cmseos.fnal.gov ls /store/user/jongho/DarkHiggs/NanoAODv6/${year} | grep --color=auto "${outdirname}"
     fi
     
     #creating tarball
