@@ -27,4 +27,4 @@ queue {3}
 with open(logpath+'/condor.jdl','w') as jdlfile:
   jdlfile.write(classad)
 
-system('condor_submit %s/condor.jdl'%logpath)
+system('condor_submit -name lpcschedd3.fnal.gov %s/condor.jdl'%logpath)

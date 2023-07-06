@@ -9,6 +9,12 @@ export BASEDIR=`pwd`
 echo "Starting job on " `date` #Date/time of start of job
 echo "Running on: `uname -a`" #Condor job is running on this node
 echo "System software: `cat /etc/redhat-release`" #Operating System on that node
+echo "Printing the environment variables"
+printenv
+echo ""
+echo ""
+pwd 
+ls -alh /srv
 
 ############
 # inputs
@@ -21,7 +27,6 @@ source ./inputs.sh
 #############
 #############
 # Set random number
-
 
 RANDOMSEED=`od -vAn -N4 -tu4 < /dev/urandom`
 
@@ -38,12 +43,12 @@ outfilename="${outfilename_tmp//[[:space:]]/}"
 # Move gridpack to tmp+random number directory
 # Also do sed to give the correct path to the gridpack
 
-mkdir -p /tmp/dir_${TempNumber}
-mv input/*tar.xz /tmp/dir_${TempNumber}/
+mkdir -p /srv/tmp/dir_${TempNumber}
+mv input/*tar.xz /srv/tmp/dir_${TempNumber}/
 
 echo "Random number is ${TempNumber}"
-ls -ltrh /tmp/
-ls -ltrh /tmp/dir_${TempNumber}
+ls -ltrh /srv/tmp/
+ls -ltrh /srv/tmp/dir_${TempNumber}
 echo ""
 
 sed -i "s/dirname/dir_${TempNumber}/g" input/${HADRONIZER} 
@@ -66,9 +71,9 @@ export WORKDIR=`pwd`
 #############
 # Generate GEN-SIM
 
-export SCRAM_ARCH=slc7_amd64_gcc700
-scram p CMSSW CMSSW_10_2_18
-cd CMSSW_10_2_18/src
+export SCRAM_ARCH=slc6_amd64_gcc481
+scram p CMSSW CMSSW_7_1_43_patch1
+cd CMSSW_7_1_43_patch1/src
 eval `scram runtime -sh`
 
 mkdir -p Configuration/GenProduction/python/
@@ -76,7 +81,8 @@ cp ${BASEDIR}/input/${HADRONIZER} Configuration/GenProduction/python/
 
 scram b
 
-cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --datatier GEN-SIM,LHE --conditions 102X_upgrade2018_realistic_v11 --beamspot Realistic25ns13TeVEarly2018Collision --step LHE,GEN,SIM --geometry DB:Extended --era Run2_2018 --python_filename ${outfilename}_gensim.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="${RANDOMSEED}" -n 300
+cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --fileout file:${outfilename}_gensim.root --mc --eventcontent RAWSIM,LHE --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM,LHE --conditions MCRUN2_71_V1::All --beamspot Realistic50ns13TeVCollision --step LHE,GEN,SIM --magField 38T_PostLS1 --python_filename ${outfilename}_gensim.py --no_exec --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${RANDOMSEED})" -n 300
+
 
 # Run
 cmsRun ${outfilename}_gensim.py
@@ -93,15 +99,24 @@ ls -ltrh
 ############
 # Generate AOD
 
-cp ${BASEDIR}/input/pu_files2018.py ./
-cp ${BASEDIR}/input/aod_template2018.py ./${outfilename}_cfg.py
+export SCRAM_ARCH=slc6_amd64_gcc530
+scram p CMSSW CMSSW_8_0_31
+cd CMSSW_8_0_31/src
+eval `scram runtime -sh`
+scram b
+cd ../../
+
+cp ${BASEDIR}/input/pu_files2016.py ./
+cp ${BASEDIR}/input/aod_template2016.py ./${outfilename}_cfg.py
 
 sed -i 's/XX-GENSIM-XX/'${outfilename}'/g' ${outfilename}_cfg.py 
 sed -i 's/XX-AODFILE-XX/'${outfilename}'/g' ${outfilename}_cfg.py 
 
 cmsRun ${outfilename}_cfg.py
 
-cmsDriver.py step2 --filein file:${outfilename}_step1.root --fileout file:${outfilename}_aod.root --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 102X_upgrade2018_realistic_v15 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --procModifiers premix_stage2 --nThreads 2 --era Run2_2018 --python_filename ${outfilename}_aod_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 500
+ls -ltrh
+
+cmsDriver.py step2 --filein file:${outfilename}_step1.root --fileout file:${outfilename}_aod.root --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,RECO,EI --nThreads 2 --era Run2_2016 --python_filename ${outfilename}_aod_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 500
 
 #Run
 cmsRun ${outfilename}_aod_cfg.py
@@ -113,7 +128,14 @@ ls -ltrh
 ############
 # Generate MiniAOD
 
-cmsDriver.py step3 --filein file:${outfilename}_aod.root --fileout file:${outfilename}_miniaod.root --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 102X_upgrade2018_realistic_v15 --step PAT --nThreads 2 --geometry DB:Extended --era Run2_2018 --python_filename ${outfilename}_miniaod_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 500 
+export SCRAM_ARCH=slc6_amd64_gcc630
+scram p CMSSW CMSSW_9_4_9
+cd CMSSW_9_4_9/src
+eval `scram runtime -sh`
+scram b
+cd ../../
+
+cmsDriver.py step3 --filein file:${outfilename}_aod.root --fileout file:${outfilename}_miniaod.root --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 94X_mcRun2_asymptotic_v3 --step PAT --nThreads 2 --era Run2_2016,run2_miniAOD_80XLegacy --python_filename ${outfilename}_miniaod_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 500
 
 #Run
 cmsRun ${outfilename}_miniaod_cfg.py
@@ -123,15 +145,18 @@ ls -ltrh *miniaod.root
 ###########
 ###########
 # Generate NanoAOD
-
+export SCRAM_ARCH=slc6_amd64_gcc700
+scram p CMSSW CMSSW_10_2_18
 cd CMSSW_10_2_18/src
+eval `scram runtime -sh`
+
 cp ${BASEDIR}/input/nanotools.tar ./
 tar xvaf nanotools.tar 
 
 scram b -j 1
 mv ../../${outfilename}_miniaod.root ./${outfilename}_miniaod.root
 
-cp ${BASEDIR}/input/mc_NANO_2018.py ./${outfilename}_nanoaod_cfg.py
+cp ${BASEDIR}/input/mc_NANO_2016.py ./${outfilename}_nanoaod_cfg.py
 
 sed -i 's/XX-MINI-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py 
 sed -i 's/XX-NANO-XX/'${outfilename}'/g' ${outfilename}_nanoaod_cfg.py
@@ -142,9 +167,7 @@ cmsRun ${outfilename}_nanoaod_cfg.py
 ls -ltrh *nano.root
 
 ### mono-hs samples ###
-#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2018/Mz2000_mhs50_Mdm500
-#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2018/Mz2000_mhs70_Mdm500
-#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2018/Mz2000_mhs90_Mdm500
+OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2016/changeME
 
 echo ""
 echo "xrdcp output to ${OUTDIRnano}"
@@ -162,4 +185,5 @@ done
 ###########
 ###########
 
+echo ""
 echo "DONE."

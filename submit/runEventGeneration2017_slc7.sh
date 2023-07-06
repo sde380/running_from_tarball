@@ -37,15 +37,20 @@ outfilename="${outfilename_tmp//[[:space:]]/}"
 # Move gridpack to tmp+random number directory
 # Also do sed to give the correct path to the gridpack
 
-mkdir -p /tmp/dir_${TempNumber}
+#mkdir -p /srv/tmp/dir_${TempNumber}
+#mv input/*tar.xz /srv/tmp/dir_${TempNumber}/
+#
+#echo "Random number is ${TempNumber}"
+#ls -ltrh /srv/tmp/
+#ls -ltrh /srv/tmp/dir_${TempNumber}
+#echo ""
+#
+#sed -i "s/dirname/dir_${TempNumber}/g" input/${HADRONIZER} 
+#cat input/${HADRONIZER} | grep "prefix ="
+#echo ""
+mkdir -p /tmp/dir_${TempNumber}/                                                                                             
 mv input/*tar.xz /tmp/dir_${TempNumber}/
-
-echo "Random number is ${TempNumber}"
-ls -ltrh /tmp/
-ls -ltrh /tmp/dir_${TempNumber}
-echo ""
-
-sed -i "s/dirname/dir_${TempNumber}/g" input/${HADRONIZER} 
+sed -i "s/dirname/dir_${TempNumber}/g" input/${HADRONIZER}
 cat input/${HADRONIZER} | grep "prefix ="
 echo ""
 
@@ -149,9 +154,7 @@ cmsRun ${outfilename}_nanoaod_cfg.py
 
 ls -ltrh *nano.root
 
-#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2017/Mz3000_mhs50_Mdm1500
-#OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2017/Mz3000_mhs70_Mdm1500
-OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2017/Mz995_mhs110_Mdm500
+OUTDIRnano=root://cmseos.fnal.gov//store/user/jongho/DarkHiggs/NanoAODv6/2017/Mz1000_mhs150_Mdm1000
 
 echo ""
 echo "xrdcp output to ${OUTDIRnano}"

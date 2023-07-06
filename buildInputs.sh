@@ -37,6 +37,7 @@ if [ ${data} = "MonoHs" ]; then
     rm -r work_${dname}_MZprime-${mZ}_Mhs-${mHS}_Mchi-${mCHI}
     mkdir -p work_${dname}_MZprime-${mZ}_Mhs-${mHS}_Mchi-${mCHI}
     SUBMIT_WORKDIR=${BASEDIR}/work_${dname}_MZprime-${mZ}_Mhs-${mHS}_Mchi-${mCHI}
+    outdirname=Mz${mZ}_mhs${mHS}_Mdm${mCHI}
 
     
     if [ ${year} -eq 2016 ]; then
@@ -47,7 +48,6 @@ if [ ${data} = "MonoHs" ]; then
         cp inputs/mc_NANO_2016.py ./submit/input/
         cp ${BASEDIR}/exec2016.sh $SUBMIT_WORKDIR
         # Change output dir
-        outdirname=Mz${mZ}_Mhs${mHS}_Mdm${mCHI}
         cp scripts/runEventGeneration2016_v2.sh ./submit/ 
         sed -i "s/changeME/${outdirname}/g" ./submit/runEventGeneration2016_v2.sh
         eos root://cmseos.fnal.gov mkdir -p /store/user/jongho/DarkHiggs/NanoAODv6/${year}/${outdirname}
@@ -61,6 +61,7 @@ if [ ${data} = "MonoHs" ]; then
         cp inputs/pu_files2017.py ./submit/input/
         cp inputs/mc_NANO_2017.py ./submit/input/
         cp ${BASEDIR}/exec2017.sh $SUBMIT_WORKDIR
+        # Change output dir
         cp scripts/runEventGeneration2017_slc7.sh ./submit/ 
         sed -i "s/changeME/${outdirname}/g" ./submit/runEventGeneration2017_slc7.sh
         eos root://cmseos.fnal.gov mkdir -p /store/user/jongho/DarkHiggs/NanoAODv6/${year}/${outdirname}
@@ -75,7 +76,6 @@ if [ ${data} = "MonoHs" ]; then
         cp inputs/mc_NANO_2018.py ./submit/input/
         cp ${BASEDIR}/exec2018.sh $SUBMIT_WORKDIR
         # Change output dir
-        outdirname=Mz${mZ}_Mhs${mHS}_Mdm${mCHI}
         cp scripts/runEventGeneration2018_slc7.sh ./submit/ 
         sed -i "s/changeME/${outdirname}/g" ./submit/runEventGeneration2018_slc7.sh
         eos root://cmseos.fnal.gov mkdir -p /store/user/jongho/DarkHiggs/NanoAODv6/${year}/${outdirname}

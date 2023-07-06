@@ -3,7 +3,7 @@
 from sys import argv
 from os import system,getenv,getuid,getcwd
 
-logpath='/uscmst1b_scratch/lpc1/3DayLifetime/jongho/log3'
+logpath='/uscmst1b_scratch/lpc1/3DayLifetime/jongho/log1'
 workpath=getcwd()+'/'+str(argv[1])
 uid=getuid()
 
