@@ -20,14 +20,12 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-files = glob(f'hadronizer/{args.model}/*py')
+files = glob(f'hadronizer/monoHiggsToBB_{args.model}/*py')
 files = sorted(files)
 
 for ifile in files:
-    med_mass = ifile.split('.')[0].split('_')[2].split('MZp')[1]
-    dm_mass = ifile.split('.')[0].split('_')[3].split('MChi')[1]
-
-    run_args = ['bash', 'buildInputs_monohiggs.sh', args.model, str(med_mass), str(dm_mass), '2016']
+    dname = ifile.split('hadronizer_')[1].split('.py')[0]
+    run_args = ['bash', 'buildInputs_monohiggs.sh', args.model, dname, '2016']
     print(run_args, '\n')
     subprocess.run(run_args)
 
