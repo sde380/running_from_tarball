@@ -2,23 +2,12 @@
 
 This is a small framework to privately generate RunII MC events from a standard CMS gridpack (i.e. the output has to be a cmsgrid_final.lhe file).
 
-## Installation
-
-1. Prepare your hadronizer including "externalLHEproducer" module and put into the `inputs/` folder
-2. Select which mass point do you want to produce   
-https://github.com/Quantumapple/running_from_tarball/blob/jongho/buildInputs.sh#L5-L7
-3. Modify `submit_slc7.py`, determining where you want to store logs etc.  
-4. Adjust the desired number of events per job here:  
-https://github.com/Quantumapple/running_from_tarball/blob/jongho/submit/runEventGeneration2017_slc7.sh#L63  
+### MonoHiggs model
+[model] = 'zpbaryonic', '2hdma'
 ```
-cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} --options.... -n $nevents
+python3 preprocess.py -m [model]
 ```
-5. Modify your output location and site identifier, which is currently set to LPC cluster:  
-https://github.com/Quantumapple/running_from_tarball/blob/jongho/submit/runEventGeneration2017_slc7.sh#L113
-
-## Run
-
-```bash
-bash buildInputs.sh DarkHiggs_MonoHs/Jet_LO_2016/2017/2018 2016/2017/2018
-python submit_slc7.py $work_directory $njobs
+Then, replace [njobs] to 200.
+```
+python submit_slc6.py work_[mass point] [njobs]
 ```
