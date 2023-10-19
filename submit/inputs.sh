@@ -1,3 +1,0 @@
-HADRONIZER=DarkHiggs_MonoHs_LO_2017_MZprime-1000_Mhs-150_Mchi-1000_hadronizer.py
-PROCESS=DarkHiggs_MonoHs_LO_2017_MZprime-1000_Mhs-150_Mchi-1000
-USERNAME=jongho
