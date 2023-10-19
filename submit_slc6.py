@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
 from sys import argv
-from os import system,getenv,getuid,getcwd
+import os
 
-workpath=getcwd()+'/'+str(argv[1])
-uid=getuid()
+workpath=os.getcwd()+'/'+str(argv[1])
+uid=os.getuid()
 logpath=f'/uscmst1b_scratch/lpc1/3DayLifetime/{uid}'
+
+if not os.path.exists(logpath):
+    os.mkdir(logpath)
 
 njobs = argv[2]
 classad='''
@@ -21,12 +24,11 @@ error = {1}/$(Cluster)_$(Process).err
 log = {1}/$(Cluster)_$(Process).log
 arguments = $(Process)
 +SingularityImage = "/cvmfs/singularity.opensciencegrid.org/cmssw/cms:rhel6"
-request_memory = 4096
+request_memory = 2800
 queue {3}
 '''.format(workpath,logpath,uid,njobs)
 
 with open(logpath+'/condor.jdl','w') as jdlfile:
   jdlfile.write(classad)
 
-system('condor_submit %s/condor.jdl'%logpath)
-#+SingularityImage = "/cvmfs/singularity.opensciencegrid.org/bbockelm/cms:rhel6"
+os.system('condor_submit %s/condor.jdl'%logpath)
