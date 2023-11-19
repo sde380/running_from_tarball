@@ -4,7 +4,7 @@ from sys import argv
 import os
 
 workpath=os.getcwd()+'/'+str(argv[1])
-uid=os.getuid()
+uid=os.getlogin()
 logpath=f'/uscmst1b_scratch/lpc1/3DayLifetime/{uid}'
 
 if not os.path.exists(logpath):

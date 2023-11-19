@@ -9,5 +9,5 @@ python3 preprocess.py -m [model]
 ```
 Then, replace [njobs] to 200.
 ```
-python submit_slc6.py work_[mass point] [njobs]
+python3 submit_slc6.py work_[mass point] [njobs]
 ```
